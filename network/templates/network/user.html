@@ -1,0 +1,54 @@
+{% extends 'network/layout.html' %}
+
+
+{% block body %}
+
+
+{% if message %}
+    <h2>{{ message }}</h2>
+{% endif %}
+
+<h3>
+    Followers: 
+    <small class="text-muted">{{ followers }}</small>
+</h3>
+
+
+<h3>
+    Following: 
+    <small class="text-muted">{{ following }}</small>
+</h3>
+    
+
+{% if user.is_authenticated %}
+    {% if user.username != profile_user.username %}
+        
+        {% if isFollowing %}
+            <form action="{% url 'handle_unfollow' %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-warning" type="submit">Unfollow</button>
+                <input type="hidden" name="profile_user" value="{{ profile_user }}">
+            </form>
+        {% else %}
+            <form action="{% url 'handle_follow' %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-primary" type="submit">Follow</button>
+                <input type="hidden" name="profile_user" value="{{ profile_user }}">
+            </form>
+        {% endif %} 
+    {% endif %}
+
+{% for post in posts %}
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">{{ post.author }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">{{ post.date_time }}</h6>
+        <p class="card-text">{{ post.text }}</p>
+        <p>Likes: {{ post.likes }}</p>
+        <a href="#" class="card-link">Like</a>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+
+{% endblock body %}

@@ -1,0 +1,52 @@
+{% extends 'network/layout.html' %}
+
+{% block body %}
+
+<script>
+    function getCookie(name){
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if(parts.length == 2) return parts.pop().split(';').shift();
+        }
+
+
+    function handle_edit() {
+        const text = document.querySelector('#id_text').value;
+        const post_id = document.getElementById('post_id').value;
+        fetch(`edit_two/${post_id}`, {
+            method: 'POST',
+            headers: {"Content-type": "application/json", "X-CSRFToken": getCookie("csrftoken")},
+            body: JSON.stringify({
+                content: text
+            })
+        })
+        .then(response => response.json())
+        .then((data) => console.log(data))
+        .catch(error => console.log(error))
+    }
+</script>
+
+{% for post in posts_paginated %}
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title"><a href="{% url 'user_info' post.author.id %}">{{ post.author }}</a></h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{ post.date_time }}</h6>
+            
+            {% if post != post_to_edit %}
+                <p class="card-text">{{ post.text }}</p>            
+            {% else %}
+                {{ edit_form }}
+                <button class="btn btn-primary" onclick="handle_edit()">Save</button>
+                <input type="hidden" value="{{ post_to_edit.id }}" id="post_id">
+            {% endif %}
+
+            <p>Likes: {{ post.likes }}</p>
+            <a href="#" class="card-link">Like</a>
+            {% if user == post.author %}
+                <a id="edit_link" class="card-link" href="{% url 'edit' post.id %}" class="card-link">Edit</a>                
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}
+
+{% endblock body %}    

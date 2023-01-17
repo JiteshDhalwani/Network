@@ -1,0 +1,31 @@
+{% extends 'network/layout.html' %}
+
+
+{% block body %}
+    
+    {% for post in posts_paginated %}
+        <div class="card">
+            <div class="card-body">
+            <h5 class="card-title"><a href="{% url 'user_info' post.author.id %}">{{ post.author }}</a></h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{ post.date_time }}</h6>
+            <p class="card-text">{{ post.text }}</p>
+            <p>Likes: {{ post.likes }}</p>
+            <a href="#" class="card-link">Like</a>
+            </div>
+        </div>
+    {% endfor %}
+
+        {% if posts_paginated.has_previous %}
+            <a href="?page=1">&laquo First </a>
+            <a href="?page={{ posts_paginated.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        Page {{ posts_paginated.number }} of {{ posts_paginated.paginator.num_pages }}
+
+        
+        {% if posts_paginated.has_next %}
+            <a href="?page={{ posts_paginated.next_page_number }}">Next</a>
+            <a href="?page={{ posts_paginated.paginator.num_pages }}">Last &raquo</a>
+        {% endif %}
+        
+{% endblock body %}
